@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\AccommodationResource;
 use App\Http\Resources\UserResource;
 use App\Models\Accommodation;
+use App\Models\CommunityPost;
 use App\Models\Report;
 use App\Models\Review;
 use App\Models\User;
@@ -41,8 +42,10 @@ class DashboardController extends Controller
                     'total_users' => User::query()->whereIn('role', ['owner', 'user'])->count(),
                     'total_owners' => User::query()->where('role', 'owner')->count(),
                     'total_accommodations' => (int) ($accommodationStats->total ?? 0),
-                    'pending_approvals' => (int) ($accommodationStats->pending ?? 0),
+                    'pending_approvals' => (int) ($accommodationStats->pending ?? 0)
+                        + CommunityPost::query()->where('status', 'pending')->count(),
                     'pending_accommodations' => (int) ($accommodationStats->pending ?? 0),
+                    'pending_community_posts' => CommunityPost::query()->where('status', 'pending')->count(),
                     'approved_accommodations' => (int) ($accommodationStats->approved ?? 0),
                     'rejected_accommodations' => (int) ($accommodationStats->rejected ?? 0),
                     'total_reviews' => Review::query()->count(),

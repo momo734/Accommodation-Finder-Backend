@@ -60,7 +60,7 @@ class AccommodationController extends Controller
 
         return AccommodationResource::collection($accommodations)
             ->additional([
-                'message' => 'Accommodations retrieved successfully.',
+                'message' => 'Hostels retrieved successfully.',
             ]);
     }
 
@@ -68,7 +68,7 @@ class AccommodationController extends Controller
     {
         if ($accommodation->status !== 'approved') {
             return response()->json([
-                'message' => 'Accommodation not found.',
+                'message' => 'Hostel not found.',
             ], 404);
         }
 
@@ -91,7 +91,7 @@ class AccommodationController extends Controller
         }
 
         return response()->json([
-            'message' => 'Accommodation retrieved successfully.',
+            'message' => 'Hostel retrieved successfully.',
             'data' => new AccommodationResource($accommodation),
         ]);
     }
@@ -109,7 +109,7 @@ class AccommodationController extends Controller
 
         return AccommodationResource::collection($related)
             ->additional([
-                'message' => 'Related accommodations retrieved successfully.',
+                'message' => 'Related hostels retrieved successfully.',
             ]);
     }
 }

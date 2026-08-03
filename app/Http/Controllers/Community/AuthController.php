@@ -23,7 +23,7 @@ class AuthController extends Controller
             'role' => ['required', Rule::in(['user', 'owner'])],
         ]);
 
-        $user = User::query()->create([
+        User::query()->create([
             'name' => $data['name'],
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
@@ -32,14 +32,8 @@ class AuthController extends Controller
             'is_active' => true,
         ]);
 
-        $token = $user->createToken('community-token')->plainTextToken;
-
         return response()->json([
-            'message' => 'Registration successful.',
-            'data' => [
-                'user' => $this->formatUser($user),
-                'token' => $token,
-            ],
+            'message' => 'Registration successful. Please sign in to continue.',
         ], 201);
     }
 

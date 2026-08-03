@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,7 +22,7 @@ class AccommodationResource extends JsonResource
                 ->values()
                 ->map(fn ($image) => [
                     'id' => $image->id,
-                    'image_path' => $image->image_path,
+                    'image_path' => MediaUrl::public($image->image_path),
                     'is_primary' => $image->is_primary,
                     'sort_order' => $image->sort_order,
                 ]);
@@ -29,9 +30,10 @@ class AccommodationResource extends JsonResource
 
         $primaryImage = null;
         if ($this->relationLoaded('images')) {
-            $primaryImage = optional(
+            $raw = optional(
                 $this->images->firstWhere('is_primary', true) ?? $this->images->first()
             )->image_path;
+            $primaryImage = MediaUrl::public($raw);
         }
 
         return [

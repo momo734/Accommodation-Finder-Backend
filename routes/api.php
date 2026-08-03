@@ -2,14 +2,20 @@
 
 use App\Http\Controllers\Admin\AccommodationController as AdminAccommodationController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\CommunityPostController as AdminCommunityPostController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\OwnerController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Community\AccommodationController as CommunityAccommodationController;
 use App\Http\Controllers\Community\AuthController as CommunityAuthController;
+use App\Http\Controllers\Community\CommunityPostController;
+use App\Http\Controllers\Community\CommunityPostInteractionController;
 use App\Http\Controllers\Community\FavouriteController;
+use App\Http\Controllers\Community\FeedController;
+use App\Http\Controllers\Community\NotificationController as CommunityNotificationController;
 use App\Http\Controllers\Community\ReviewController as CommunityReviewController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,10 +27,16 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [CommunityAuthController::class, 'register']);
 Route::post('/login', [CommunityAuthController::class, 'login']);
 
+Route::get('/feed', [FeedController::class, 'index']);
 Route::get('/accommodations', [CommunityAccommodationController::class, 'index']);
 Route::get('/accommodations/{accommodation}', [CommunityAccommodationController::class, 'show']);
 Route::get('/accommodations/{accommodation}/related', [CommunityAccommodationController::class, 'related']);
 Route::get('/accommodations/{accommodation}/reviews', [CommunityReviewController::class, 'index']);
+
+Route::get('/community/posts', [CommunityPostController::class, 'index']);
+Route::get('/community/posts/{post}', [CommunityPostController::class, 'show']);
+Route::get('/community/posts/{post}/related', [CommunityPostController::class, 'related']);
+Route::get('/community/posts/{post}/comments', [CommunityPostInteractionController::class, 'comments']);
 
 Route::middleware(['auth:sanctum', 'community'])->group(function () {
     Route::post('/logout', [CommunityAuthController::class, 'logout']);
@@ -38,6 +50,23 @@ Route::middleware(['auth:sanctum', 'community'])->group(function () {
     Route::delete('/favourites/{accommodation}', [FavouriteController::class, 'destroy']);
 
     Route::post('/accommodations/{accommodation}/reviews', [CommunityReviewController::class, 'store']);
+
+    Route::get('/notifications', [CommunityNotificationController::class, 'index']);
+    Route::post('/notifications/read-all', [CommunityNotificationController::class, 'markAllRead']);
+    Route::post('/notifications/{user_notification}/read', [CommunityNotificationController::class, 'markRead']);
+
+    Route::get('/community/my-posts', [CommunityPostController::class, 'mine']);
+    Route::post('/community/posts', [CommunityPostController::class, 'store']);
+    Route::put('/community/posts/{post}', [CommunityPostController::class, 'update']);
+    Route::post('/community/posts/{post}', [CommunityPostController::class, 'update']); // multipart edit
+    Route::delete('/community/posts/{post}', [CommunityPostController::class, 'destroy']);
+
+    Route::post('/community/posts/{post}/like', [CommunityPostInteractionController::class, 'toggleLike']);
+    Route::post('/community/posts/{post}/favourite', [CommunityPostInteractionController::class, 'toggleFavourite']);
+    Route::post('/community/posts/{post}/comments', [CommunityPostInteractionController::class, 'storeComment']);
+    Route::delete('/community/posts/{post}/comments/{comment}', [CommunityPostInteractionController::class, 'destroyComment']);
+    Route::get('/community/post-favourites', [CommunityPostInteractionController::class, 'favourites']);
+    Route::get('/community/post-favourites/ids', [CommunityPostInteractionController::class, 'favouriteIds']);
 });
 
 /*
@@ -55,11 +84,18 @@ Route::prefix('admin')->group(function () {
         Route::put('/change-password', [AdminAuthController::class, 'changePassword']);
 
         Route::get('/dashboard', [DashboardController::class, 'index']);
+        Route::get('/notifications', [AdminNotificationController::class, 'index']);
 
         Route::apiResource('accommodations', AdminAccommodationController::class)
             ->only(['index', 'store', 'show', 'update', 'destroy']);
         Route::post('/accommodations/{accommodation}/approve', [AdminAccommodationController::class, 'approve']);
         Route::post('/accommodations/{accommodation}/reject', [AdminAccommodationController::class, 'reject']);
+
+        Route::get('/community-posts', [AdminCommunityPostController::class, 'index']);
+        Route::get('/community-posts/{post}', [AdminCommunityPostController::class, 'show']);
+        Route::post('/community-posts/{post}/approve', [AdminCommunityPostController::class, 'approve']);
+        Route::post('/community-posts/{post}/reject', [AdminCommunityPostController::class, 'reject']);
+        Route::delete('/community-posts/{post}', [AdminCommunityPostController::class, 'destroy']);
 
         Route::apiResource('users', UserController::class)
             ->only(['index', 'show', 'update', 'destroy']);

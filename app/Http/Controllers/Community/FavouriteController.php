@@ -38,7 +38,7 @@ class FavouriteController extends Controller
     {
         if ($accommodation->status !== 'approved') {
             return response()->json([
-                'message' => 'Accommodation not found.',
+                'message' => 'Hostel not found.',
             ], 404);
         }
 

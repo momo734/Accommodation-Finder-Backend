@@ -36,7 +36,7 @@ class AccommodationController extends Controller
 
         return AccommodationResource::collection($accommodations)
             ->additional([
-                'message' => 'Accommodations retrieved successfully.',
+                'message' => 'Hostels retrieved successfully.',
             ]);
     }
 
@@ -95,7 +95,7 @@ class AccommodationController extends Controller
             ->loadCount(['reviews', 'favourites', 'reports']);
 
         return response()->json([
-            'message' => 'Accommodation created successfully.',
+            'message' => 'Hostel created successfully.',
             'data' => new AccommodationResource($accommodation),
         ], 201);
     }
@@ -109,7 +109,7 @@ class AccommodationController extends Controller
         ])->loadCount(['reviews', 'favourites', 'reports']);
 
         return response()->json([
-            'message' => 'Accommodation retrieved successfully.',
+            'message' => 'Hostel retrieved successfully.',
             'data' => new AccommodationResource($accommodation),
         ]);
     }
@@ -122,7 +122,7 @@ class AccommodationController extends Controller
             ->loadCount(['reviews', 'favourites', 'reports']);
 
         return response()->json([
-            'message' => 'Accommodation updated successfully.',
+            'message' => 'Hostel updated successfully.',
             'data' => new AccommodationResource($accommodation),
         ]);
     }
@@ -131,7 +131,7 @@ class AccommodationController extends Controller
     {
         if ($accommodation->status === 'approved') {
             return response()->json([
-                'message' => 'Accommodation is already approved.',
+                'message' => 'Hostel is already approved.',
             ], 422);
         }
 
@@ -141,7 +141,7 @@ class AccommodationController extends Controller
             ->loadCount(['reviews', 'favourites', 'reports']);
 
         return response()->json([
-            'message' => 'Accommodation approved successfully.',
+            'message' => 'Hostel approved successfully.',
             'data' => new AccommodationResource($accommodation),
         ]);
     }
@@ -150,7 +150,7 @@ class AccommodationController extends Controller
     {
         if ($accommodation->status === 'rejected') {
             return response()->json([
-                'message' => 'Accommodation is already rejected.',
+                'message' => 'Hostel is already rejected.',
             ], 422);
         }
 
@@ -160,7 +160,7 @@ class AccommodationController extends Controller
             ->loadCount(['reviews', 'favourites', 'reports']);
 
         return response()->json([
-            'message' => 'Accommodation rejected successfully.',
+            'message' => 'Hostel rejected successfully.',
             'data' => new AccommodationResource($accommodation),
         ]);
     }
@@ -170,7 +170,7 @@ class AccommodationController extends Controller
         $accommodation->delete();
 
         return response()->json([
-            'message' => 'Accommodation deleted successfully.',
+            'message' => 'Hostel deleted successfully.',
         ]);
     }
 }

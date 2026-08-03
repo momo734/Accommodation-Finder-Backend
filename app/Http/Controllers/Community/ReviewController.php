@@ -15,7 +15,7 @@ class ReviewController extends Controller
     public function index(Accommodation $accommodation): AnonymousResourceCollection
     {
         if ($accommodation->status !== 'approved') {
-            abort(404, 'Accommodation not found.');
+            abort(404, 'Hostel not found.');
         }
 
         $reviews = Review::query()
@@ -35,7 +35,7 @@ class ReviewController extends Controller
     {
         if ($accommodation->status !== 'approved') {
             return response()->json([
-                'message' => 'Accommodation not found.',
+                'message' => 'Hostel not found.',
             ], 404);
         }
 
