@@ -23,7 +23,7 @@ class FeedController extends Controller
             'township' => ['nullable', 'string', 'max:255'],
             'min_price' => ['nullable', 'numeric', 'min:0'],
             'max_price' => ['nullable', 'numeric', 'min:0'],
-            'bedrooms' => ['nullable', 'integer', 'min:1'],
+            'type' => ['nullable', 'string', 'max:100'],
             'listings_limit' => ['nullable', 'integer', 'min:1', 'max:50'],
             'posts_limit' => ['nullable', 'integer', 'min:0', 'max:50'],
             // Axios sends "true"/"false" strings — accept loosely.
@@ -35,7 +35,7 @@ class FeedController extends Controller
             ? (int) $filters['posts_limit']
             : 12;
         $includeTotals = filter_var($request->input('include_totals', false), FILTER_VALIDATE_BOOLEAN);
-        $hasBedrooms = filled($filters['bedrooms'] ?? null);
+        $hasRoomType = filled($filters['type'] ?? null);
 
         $listings = Accommodation::query()
             ->select([
@@ -55,13 +55,13 @@ class FeedController extends Controller
             })
             ->when($filters['min_price'] ?? null, fn ($q, $min) => $q->where('price', '>=', $min))
             ->when($filters['max_price'] ?? null, fn ($q, $max) => $q->where('price', '<=', $max))
-            ->when($filters['bedrooms'] ?? null, fn ($q, $beds) => $q->where('bedrooms', $beds))
+            ->when($filters['type'] ?? null, fn ($q, $type) => $q->where('type', $type))
             ->latest('id')
             ->limit($listingsLimit)
             ->get();
 
         $posts = collect();
-        if (! $hasBedrooms && $postsLimit > 0) {
+        if (! $hasRoomType && $postsLimit > 0) {
             $posts = CommunityPost::query()
                 ->select([
                     'id', 'user_id', 'title', 'description', 'post_type', 'city', 'township',
@@ -101,10 +101,10 @@ class FeedController extends Controller
                 })
                 ->when($filters['min_price'] ?? null, fn ($q, $min) => $q->where('price', '>=', $min))
                 ->when($filters['max_price'] ?? null, fn ($q, $max) => $q->where('price', '<=', $max))
-                ->when($filters['bedrooms'] ?? null, fn ($q, $beds) => $q->where('bedrooms', $beds))
+                ->when($filters['type'] ?? null, fn ($q, $type) => $q->where('type', $type))
                 ->count();
 
-            $payload['posts_total'] = $hasBedrooms
+            $payload['posts_total'] = $hasRoomType
                 ? 0
                 : CommunityPost::query()
                     ->where('status', 'approved')

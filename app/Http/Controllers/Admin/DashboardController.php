@@ -7,7 +7,7 @@ use App\Http\Resources\AccommodationResource;
 use App\Http\Resources\UserResource;
 use App\Models\Accommodation;
 use App\Models\CommunityPost;
-use App\Models\Report;
+use App\Models\ContactMessage;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -49,7 +49,8 @@ class DashboardController extends Controller
                     'approved_accommodations' => (int) ($accommodationStats->approved ?? 0),
                     'rejected_accommodations' => (int) ($accommodationStats->rejected ?? 0),
                     'total_reviews' => Review::query()->count(),
-                    'total_reports' => Report::query()->count(),
+                    'unread_contacts' => ContactMessage::query()->where('is_read', false)->count(),
+                    'total_contact_messages' => ContactMessage::query()->count(),
                 ],
                 'recent_users' => UserResource::collection($recentUsers),
                 'recent_accommodations' => AccommodationResource::collection($recentAccommodations),

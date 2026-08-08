@@ -13,10 +13,12 @@ use App\Http\Controllers\Community\AccommodationController as CommunityAccommoda
 use App\Http\Controllers\Community\AuthController as CommunityAuthController;
 use App\Http\Controllers\Community\CommunityPostController;
 use App\Http\Controllers\Community\CommunityPostInteractionController;
+use App\Http\Controllers\Community\ContactController;
 use App\Http\Controllers\Community\FavouriteController;
 use App\Http\Controllers\Community\FeedController;
 use App\Http\Controllers\Community\NotificationController as CommunityNotificationController;
 use App\Http\Controllers\Community\ReviewController as CommunityReviewController;
+use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('/register', [CommunityAuthController::class, 'register']);
 Route::post('/login', [CommunityAuthController::class, 'login']);
+Route::post('/contact', [ContactController::class, 'store']);
 
 Route::get('/feed', [FeedController::class, 'index']);
 Route::get('/accommodations', [CommunityAccommodationController::class, 'index']);
@@ -85,6 +88,11 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/dashboard', [DashboardController::class, 'index']);
         Route::get('/notifications', [AdminNotificationController::class, 'index']);
+
+        Route::get('/contact-messages', [AdminContactMessageController::class, 'index']);
+        Route::get('/contact-messages/{contactMessage}', [AdminContactMessageController::class, 'show']);
+        Route::post('/contact-messages/{contactMessage}/read', [AdminContactMessageController::class, 'markRead']);
+        Route::delete('/contact-messages/{contactMessage}', [AdminContactMessageController::class, 'destroy']);
 
         Route::apiResource('accommodations', AdminAccommodationController::class)
             ->only(['index', 'store', 'show', 'update', 'destroy']);
